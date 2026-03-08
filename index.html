@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano Alimentar · Inês Silva</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #F25C54;
+    --soft: #FFF5F4;
+    --cream: #FDF0EE;
+    --text: #2B1A1A;
+    --muted: #9B7B78;
+    --card: #FFFFFF;
+    --border: #F2D9D6;
+    --green: #5B8C5A;
+    --amber: #D4793A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--soft);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .hero {
+    background: var(--coral);
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    top: -80px; right: -60px;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    bottom: -50px; left: -30px;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .hero-sub {
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+    font-weight: 300;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 28px;
+  }
+  .stat {
+    text-align: center;
+    color: white;
+  }
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .stat-label {
+    font-size: 11px;
+    opacity: 0.7;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    min-width: 100px;
+    padding: 14px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: var(--coral);
+    border-bottom-color: var(--coral);
+  }
+  .tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }
+
+  /* CONTENT */
+  .page { display: none; padding: 20px 16px 40px; max-width: 600px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .meal-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .meal-card:nth-child(2) { animation-delay: 0.05s; }
+  .meal-card:nth-child(3) { animation-delay: 0.10s; }
+  .meal-card:nth-child(4) { animation-delay: 0.15s; }
+
+  .meal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .meal-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .meal-title { font-family: 'Playfair Display', serif; font-size: 17px; }
+  .meal-time { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+  .option-block {
+    border-left: 3px solid var(--border);
+    padding-left: 14px;
+    margin-bottom: 12px;
+  }
+  .option-block:last-child { margin-bottom: 0; }
+  .option-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--coral);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .qty {
+    font-weight: 500;
+    color: var(--coral);
+    white-space: nowrap;
+    font-size: 12px;
+    min-width: 30px;
+    padding-top: 1px;
+  }
+
+  .or-divider {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin: 8px 0;
+    font-weight: 500;
+  }
+
+  /* SECTION TAG */
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .tag-treino { background: #EBF5EA; color: var(--green); }
+  .tag-sem-treino { background: #FFF0EA; color: var(--amber); }
+
+  /* TIPS */
+  .tip-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    animation: fadeUp 0.4s ease both;
+  }
+  .tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .tip-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .tip-text { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  /* GOAL BANNER */
+  .goal-banner {
+    background: linear-gradient(135deg, var(--coral), #e04e46);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+  }
+  .goal-banner p { font-size: 13px; opacity: 0.85; margin-top: 6px; line-height: 1.6; }
+  .goal-banner .big { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; }
+
+  /* RECIPE */
+  .recipe-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 14px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .recipe-header {
+    background: var(--cream);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recipe-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+  }
+  .recipe-body { padding: 16px 18px; }
+  .recipe-body .item-row { font-size: 13px; }
+
+  .note-box {
+    background: #FFF8F0;
+    border: 1px solid #F2D9C0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: #7A5A3A;
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+
+  /* RECEITAS */
+  .recipe-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .recipe-pill span { color: var(--coral); font-weight: 600; }
+
+  .recipe-full-card {
+    background: white;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 18px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .recipe-full-card:nth-child(2) { animation-delay: 0.05s; }
+  .recipe-full-card:nth-child(3) { animation-delay: 0.10s; }
+  .recipe-full-card:nth-child(4) { animation-delay: 0.15s; }
+
+  .rfc-top {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .rfc-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .rfc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    line-height: 1.3;
+    margin-bottom: 5px;
+  }
+  .rfc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .rfc-badge {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .badge-time { background: #FFF0EA; color: var(--amber); }
+  .badge-when { background: #EBF5EA; color: var(--green); }
+  .badge-yield { background: #EAF0FB; color: #4A6FA5; }
+
+  .rfc-body { padding: 16px 20px; }
+
+  .rfc-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 14px;
+  }
+  .rfc-section-title:first-child { margin-top: 0; }
+
+  .ingredient-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+  }
+  .ing-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 13px;
+    padding: 3px 0;
+    line-height: 1.4;
+  }
+  .ing-qty {
+    font-weight: 600;
+    color: var(--coral);
+    font-size: 11.5px;
+    white-space: nowrap;
+    padding-top: 1px;
+    min-width: 28px;
+  }
+
+  .step-list { counter-reset: step-counter; }
+  .step-item {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    border-bottom: 1px dashed var(--border);
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--coral);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .rfc-note {
+    background: #FFF8F0;
+    border: 1px solid #F2D9C0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #7A5A3A;
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+
+  .plate-visual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .plate-section {
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .plate-half { background: #EBF5EA; grid-column: 1 / -1; }
+  .plate-quarter-1 { background: #EAF0FB; }
+  .plate-quarter-2 { background: #FFF5E6; }
+  .plate-section .frac { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text); font-weight: 700; }
+  .plate-section .label { font-size: 11px; font-weight: 500; letter-spacing: 0.5px; margin: 4px 0 6px; color: var(--text); }
+  .plate-section .examples { font-size: 11.5px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Plano Alimentar</div>
+  <h1>Inês Silva</h1>
+  <div class="hero-sub">Emagrecimento · Reeducação Alimentar</div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-val">57 kg</div>
+      <div class="stat-label">Peso atual</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">54–55</div>
+      <div class="stat-label">Objetivo kg</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">IMC 23</div>
+      <div class="stat-label">Índice</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('pequeno-almoco')">
+    <span class="tab-icon">☀️</span>Pequeno-almoço
+  </div>
+  <div class="tab" onclick="showTab('lanches')">
+    <span class="tab-icon">🍎</span>Lanches
+  </div>
+  <div class="tab" onclick="showTab('almoco-jantar')">
+    <span class="tab-icon">🍽️</span>Almoço/Jantar
+  </div>
+  <div class="tab" onclick="showTab('receitas')">
+    <span class="tab-icon">👩‍🍳</span>Receitas
+  </div>
+  <div class="tab" onclick="showTab('dicas')">
+    <span class="tab-icon">💡</span>Dicas
+  </div>
+</div>
+
+<!-- PEQUENO-ALMOÇO -->
+<div class="page active" id="pequeno-almoco">
+
+  <br>
+  <div class="section-tag tag-sem-treino">🚶 Dias sem treino</div>
+
+  <!-- Opção 1 -->
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#FFF0EA;">🍞</div>
+      <div>
+        <div class="meal-title">Opção Pão</div>
+        <div class="meal-time">7h00 – 7h30</div>
+      </div>
+    </div>
+    <div class="option-block">
+      <div class="item-row"><span class="qty">1</span> Chávena de chá, cevada ou café s/ açúcar</div>
+      <div class="item-row"><span class="qty">30g</span> Pão escuro / integral</div>
+      <div class="item-row"><span class="qty">1</span> Queijo magro <span style="color:var(--muted);margin-left:4px;font-size:12px;">ou queijo fresco magro 65g ou 2 triangulares light</span></div>
+      <div class="item-row"><span class="qty">1</span> Peça de fruta</div>
+    </div>
+  </div>
+
+  <!-- Opção 2 -->
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#EBF5EA;">🥣</div>
+      <div>
+        <div class="meal-title">Opção Cereais</div>
+        <div class="meal-time">7h00 – 7h30</div>
+      </div>
+    </div>
+    <div class="option-block">
+      <div class="item-row"><span class="qty">125ml</span> Leite magro <span style="color:var(--muted);margin-left:4px;font-size:12px;">(+ canela, cacau ou café)</span></div>
+      <div class="item-row"><span class="qty">20g</span> Flocos de milho s/ açúcar <span style="color:var(--muted);margin-left:4px;font-size:12px;">ou cereais puff</span></div>
+      <div class="item-row"><span class="qty">1</span> Peça de fruta <span style="color:var(--muted);margin-left:4px;font-size:12px;">(ou dobrar os cereais)</span></div>
+    </div>
+  </div>
+
+  <!-- Opção 3 -->
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#F0EEF8;">🥞</div>
+      <div>
+        <div class="meal-title">Panquecas de Aveia</div>
+        <div class="meal-time">7h00 – 7h30</div>
+      </div>
+    </div>
+    <div class="option-block">
+      <div class="option-label">Ingredientes</div>
+      <div class="item-row"><div class="dot"></div>1 ovo · 20g aveia · 1 banana madura</div>
+    </div>
+    <div class="option-block">
+      <div class="option-label">Topping</div>
+      <div class="item-row"><div class="dot"></div>1 c. chá compota s/ açúcar, mel ou xarope agave</div>
+    </div>
+    <div class="note-box">Podem ser feitas com antecedência e guardadas no frigorífico durante a semana.</div>
+  </div>
+
+  <br>
+  <div class="section-tag tag-treino">🏋️ Dias com treino</div>
+
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#EBF5EA;">💪</div>
+      <div>
+        <div class="meal-title">Pequeno-almoço reforçado</div>
+        <div class="meal-time">7h00 – 7h30</div>
+      </div>
+    </div>
+    <div class="option-block">
+      <div class="option-label">Opção A</div>
+      <div class="item-row"><span class="qty">30g</span> Pão escuro + queijo magro</div>
+      <div class="item-row"><span class="qty">1</span> Chávena chá/cevada/café s/ açúcar</div>
+    </div>
+    <div class="or-divider">— ou —</div>
+    <div class="option-block">
+      <div class="option-label">Opção B</div>
+      <div class="item-row"><span class="qty">125ml</span> Leite magro ou 1 iogurte magro (125g)</div>
+      <div class="item-row"><span class="qty">20g</span> Cereais s/ açúcar ou 1 peça de fruta</div>
+    </div>
+  </div>
+</div>
+
+<!-- LANCHES -->
+<div class="page" id="lanches">
+  <br>
+
+  <!-- LEGENDA -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);">
+      <div style="width:10px;height:10px;border-radius:50%;background:#5B8C5A;flex-shrink:0;"></div> Com treino
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);">
+      <div style="width:10px;height:10px;border-radius:50%;background:#D4793A;flex-shrink:0;"></div> Sem treino
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);">
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;"></div> Ambos os dias
+    </div>
+  </div>
+
+  <!-- MANHÃ -->
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#FFF5E0;">🌤️</div>
+      <div>
+        <div class="meal-title">Lanche da Manhã</div>
+        <div class="meal-time">
+          <span style="background:#EBF5EA;color:#5B8C5A;padding:2px 7px;border-radius:8px;font-size:11px;font-weight:500;">Com treino · 9h00</span>
+          &nbsp;
+          <span style="background:#FFF0EA;color:#D4793A;padding:2px 7px;border-radius:8px;font-size:11px;font-weight:500;">Sem treino · 10h00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">🚗 Dias com treino — opções práticas (comer a conduzir ou em 5 min)</div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:#5B8C5A;flex-shrink:0;margin-top:6px;"></div>
+        <div>1 iogurte proteico de pacote/garrafa + 1 peça de fruta</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:#5B8C5A;flex-shrink:0;margin-top:6px;"></div>
+        <div>2 ovos cozidos <span style="color:var(--muted);font-size:12px;">(preparados na véspera)</span> + 1 peça de fruta</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:#5B8C5A;flex-shrink:0;margin-top:6px;"></div>
+        <div>1 fatia de bolo caseiro do fim de semana 🍓 + iogurte proteico de garrafa</div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">🏠 Dias sem treino</div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:#D4793A;flex-shrink:0;margin-top:6px;"></div>
+        <div>Iogurte magro sólido (125g) + 1 peça de fruta</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:#D4793A;flex-shrink:0;margin-top:6px;"></div>
+        <div>Iogurte magro sólido (125g) + 2–3 bolachas arroz/milho</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:#D4793A;flex-shrink:0;margin-top:6px;"></div>
+        <div>Queijo magro (fatia ou fresco) + 30g pão integral</div>
+      </div>
+    </div>
+
+    <div class="note-box">💡 O objetivo é sempre ter <strong>proteína + algo que sacie</strong>. Nos dias de treino, 2 ovos pós-treino são adequados para recuperação muscular.</div>
+  </div>
+
+  <!-- TARDE ÚNICO -->
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#FFF0EA;">🌇</div>
+      <div>
+        <div class="meal-title">Lanche da Tarde</div>
+        <div class="meal-time">16h30 — ao chegar a casa</div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">🥛 Proteína — escolhe 1</div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>1 iogurte magro ou grego ligeiro (125g)</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>1 ovo cozido</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>Queijo magro (fatia ou fresco)</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>1 pacote leite com chocolate Mimosa Lanchinho Bom Magro</div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">🌾 Hidrato — escolhe 1</div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>2–3 bolachas arroz/milho</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>30g pão integral</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>20g cereais s/ açúcar</div>
+      </div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>1 fatia de bolo caseiro do fim de semana 🍓</div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">🍎 Fruta + gordura saudável</div>
+      <div class="item-row">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--coral);flex-shrink:0;margin-top:6px;"></div>
+        <div>1 peça de fruta + 10g oleaginosas <span style="color:var(--muted);font-size:12px;">(nozes, amêndoas, avelãs…)</span></div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      ✅ Como é o <strong>único lanche da tarde</strong>, deve ser completo: proteína + hidrato + fruta/frutos secos.<br><br>
+      🔄 <strong>Substituições:</strong> Sem pão → bolachas ou bolo caseiro · Sem queijo específico → qualquer queijo magro ou fresco.
+    </div>
+  </div>
+</div>
+
+<!-- ALMOÇO / JANTAR -->
+<div class="page" id="almoco-jantar">
+  <br>
+
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-icon" style="background:#EBF5EA;">🍽️</div>
+      <div>
+        <div class="meal-title">Almoço & Jantar</div>
+        <div class="meal-time">Almoço 12h–13h · Jantar 19h–19h30</div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">Começar com</div>
+      <div class="item-row"><div class="dot"></div>1 concha (150g) sopa de legumes <span style="color:var(--muted);font-size:12px;margin-left:4px;">s/ batata, arroz ou leguminosas</span></div>
+    </div>
+
+    <div class="plate-visual">
+      <div class="plate-section plate-half">
+        <div class="frac">½</div>
+        <div class="label">🥦 Legumes / Hortaliças</div>
+        <div class="examples">125g · temperar com 1 c. chá azeite + vinagre + ervas</div>
+      </div>
+      <div class="plate-section plate-quarter-1">
+        <div class="frac">¼</div>
+        <div class="label">🍗 Proteína</div>
+        <div class="examples">100g frango/peru<br>120g peixe<br>2 ovos<br>1 lata atum/sardinha</div>
+      </div>
+      <div class="plate-section plate-quarter-2">
+        <div class="frac">¼</div>
+        <div class="label">🍚 Hidratos</div>
+        <div class="examples">55g arroz cozido<br>60g batata/batata doce<br>80g leguminosas<br>60g quinoa</div>
+      </div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">No almoço, adicionar ainda</div>
+      <div class="item-row"><div class="dot"></div>1 peça de fruta (ou duplicar a porção de hidratos)</div>
+    </div>
+
+    <div class="note-box">
+      ⚖️ Os pesos são do alimento <strong>cozinhado</strong>.<br>
+      🫒 Só 1 c. sopa de azeite por refeição para cozinhar.<br>
+      💧 Beber 1 copo de água durante a refeição (3×/semana pode ser sumo light/zero).
+    </div>
+  </div>
+</div>
+
+<!-- RECEITAS -->
+<div class="page" id="receitas">
+  <br>
+  <div class="recipe-pill">🕐 Hora indicada para cada receita</div>
+
+  <!-- RECEITA BASE VERSÁTIL -->
+  <div class="recipe-full-card">
+    <div class="rfc-top">
+      <div class="rfc-icon" style="background:#FFFBEA;">🎂</div>
+      <div>
+        <div class="rfc-name">Bolo de Aveia Versátil</div>
+        <div class="rfc-meta">
+          <span class="rfc-badge badge-when">☀️ Pequeno-almoço · 7h–7h30</span>
+          <span class="rfc-badge badge-when">🌤️ Lanche da manhã · 9h–10h</span>
+          <span class="rfc-badge badge-when">🌇 Lanche da tarde · 16h30</span>
+          <span class="rfc-badge badge-time">⏱ 30–35 min (forno) · 15 min (frigideira)</span>
+          <span class="rfc-badge badge-yield">🍽 8 fatias ou 8 panquecas — comer 1</span>
+          <span class="rfc-badge" style="background:#FEF0F0;color:#C0392B;">🗓 Preparar ao fim de semana</span>
+        </div>
+      </div>
+    </div>
+    <div class="rfc-body">
+
+      <div class="rfc-section-title">Ingredientes base</div>
+      <div class="ingredient-grid">
+        <div class="ing-row"><span class="ing-qty">2</span> bananas maduras <span style="color:var(--muted);font-size:11px;">ver substituição ↓</span></div>
+        <div class="ing-row"><span class="ing-qty">2</span> ovos</div>
+        <div class="ing-row"><span class="ing-qty">100g</span> flocos de aveia</div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> fermento em pó</div>
+        <div class="ing-row"><span class="ing-qty">1 c.sopa</span> mel ou xarope de agave</div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> canela</div>
+      </div>
+
+      <div style="background:#F0F7FF;border:1px solid #C8DFFE;border-radius:10px;padding:10px 13px;margin:10px 0;font-size:12px;color:#3A5A8A;">
+        🔄 <strong>Sem bananas?</strong> Substituir cada banana por 120g de maçã ou pêra cozida e esmagada. Na Bimby: cozinhar 10 min / 100°C / Vel. 1, triturar 10 seg / Vel. 4.
+      </div>
+
+      <!-- VARIAÇÕES -->
+      <div class="rfc-section-title">🎨 Escolhe o sabor — adiciona à massa base</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="background:#FFF5F4;border:1px solid #F2D9D6;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:600;color:var(--coral);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">🍓 Frutos Vermelhos</div>
+          <div style="font-size:12.5px;">80g frutos vermelhos frescos ou congelados<br><span style="color:var(--muted);font-size:11px;">Envolver com espátula no fim, sem triturar</span></div>
+        </div>
+        <div style="background:#F5EEF8;border:1px solid #E8D5F5;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:600;color:#7D3C98;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">🍫 Cacau</div>
+          <div style="font-size:12.5px;">1 c.sopa cacau em pó s/ açúcar<br><span style="color:var(--muted);font-size:11px;">Misturar diretamente na massa</span></div>
+        </div>
+        <div style="background:#FFFBEA;border:1px solid #F9E79F;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:600;color:#B7950B;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">🍎 Maçã e Canela</div>
+          <div style="font-size:12.5px;">½ maçã em cubinhos + canela extra<br><span style="color:var(--muted);font-size:11px;">Envolver com espátula no fim</span></div>
+        </div>
+        <div style="background:#EBF5EA;border:1px solid #C8E6C9;border-radius:10px;padding:10px 12px;">
+          <div style="font-size:11px;font-weight:600;color:#2E7D32;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">🌿 Natural (sem extras)</div>
+          <div style="font-size:12.5px;">Só a massa base<br><span style="color:var(--muted);font-size:11px;">Servir com compota s/ açúcar</span></div>
+        </div>
+      </div>
+
+      <!-- PREPARAÇÃO BIMBY -->
+      <div class="rfc-section-title">Preparação na Bimby</div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div>Colocar as bananas no copo e triturar 10 seg / Vel. 4. Adicionar ovos e mel — misturar 20 seg / Vel. 3.</div></div>
+        <div class="step-item"><div class="step-num">2</div><div>Juntar aveia, canela e fermento. Misturar 15 seg / Vel. 3. Adicionar o ingrediente do sabor escolhido e envolver com espátula se for fruta em pedaços.</div></div>
+        <div class="step-item"><div class="step-num">3</div><div><strong>Opção forno (bolo ou muffins):</strong> Verter em forma forrada com papel vegetal ou em formas de muffin. Sonda no centro — retirar a <strong>92–95°C</strong> (aprox. 25–28 min a 180°C).</div></div>
+        <div class="step-item"><div class="step-num">4</div><div><strong>Opção frigideira (panquecas):</strong> Verter pequenas porções numa frigideira antiaderente em lume médio com tampa. Virar quando aparecerem bolhinhas — cozinhar mais 1–2 min.</div></div>
+      </div>
+
+      <div class="rfc-note">✅ Guardar no frigorífico até 4 dias. Comer 1 fatia/panqueca no pequeno-almoço, lanche da manhã ou lanche da tarde.</div>
+    </div>
+  </div>
+
+  <!-- PAPAS DE AVEIA NO FORNO -->
+  <div class="recipe-full-card">
+    <div class="rfc-top">
+      <div class="rfc-icon" style="background:#FFF5E0;">🍌</div>
+      <div>
+        <div class="rfc-name">Papas de Aveia no Forno</div>
+        <div class="rfc-meta">
+          <span class="rfc-badge badge-when">☀️ Pequeno-almoço · 7h–7h30</span>
+          <span class="rfc-badge badge-when">🌤️ Lanche da manhã · 9h–10h</span>
+          <span class="rfc-badge badge-when">🌇 Lanche da tarde · 16h–18h</span>
+          <span class="rfc-badge badge-time">⏱ 35 min</span>
+          <span class="rfc-badge badge-yield">🍽 6 doses — comer 1</span>
+        </div>
+      </div>
+    </div>
+    <div class="rfc-body">
+      <div class="rfc-section-title">Ingredientes</div>
+      <div class="ingredient-grid">
+        <div class="ing-row"><span class="ing-qty">200g</span> flocos de aveia</div>
+        <div class="ing-row"><span class="ing-qty">400ml</span> bebida vegetal soja/ervilha</div>
+        <div class="ing-row"><span class="ing-qty">20g</span> nozes</div>
+        <div class="ing-row"><span class="ing-qty">2</span> bananas <span style="color:var(--muted);font-size:11px;">ver substituição ↓</span></div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> mel</div>
+        <div class="ing-row"><span class="ing-qty">2 c.chá</span> canela</div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> fermento em pó</div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> azeite</div>
+      </div>
+      <div style="background:#F0F7FF;border:1px solid #C8DFFE;border-radius:10px;padding:10px 13px;margin:10px 0;font-size:12px;color:#3A5A8A;">
+        🔄 <strong>Sem bananas?</strong> Substituir cada banana por 120g de maçã ou pêra cozida e esmagada. Na Bimby: cozinhar a fruta 10 min / 100°C / Vel. 1, depois triturar 10 seg / Vel. 4.
+      </div>
+      <div class="rfc-section-title">Preparação na Bimby</div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div>Untar a travessa com azeite. Colocar 1 banana (ou fruta equivalente) em pedacinhos no fundo.</div></div>
+        <div class="step-item"><div class="step-num">2</div><div>No copo da Bimby: misturar aveia, bebida vegetal, fermento e mel — 20 seg / Vel. 3.</div></div>
+        <div class="step-item"><div class="step-num">3</div><div>Verter a mistura na travessa. Colocar a 2ª banana (ou fruta) cortada ao meio por cima. Polvilhar com canela.</div></div>
+        <div class="step-item"><div class="step-num">4</div><div>Forno a 180°C. Espetar a sonda no centro da travessa — retirar quando atingir <strong>90°C</strong> (aprox. 28–32 min).</div></div>
+      </div>
+      <div class="rfc-note">💡 Rende 6 porções. Guardar no frigorífico e aquecer a porção diária de manhã.</div>
+    </div>
+  </div>
+
+  <!-- MUGCAKE -->
+  <div class="recipe-full-card">
+    <div class="rfc-top">
+      <div class="rfc-icon" style="background:#EBF5EA;">🍎</div>
+      <div>
+        <div class="rfc-name">Mugcake de Maçã e Canela</div>
+        <div class="rfc-meta">
+          <span class="rfc-badge badge-when">☀️ Pequeno-almoço · 7h–7h30</span>
+          <span class="rfc-badge badge-when">🌤️ Lanche da manhã · 9h–10h</span>
+          <span class="rfc-badge badge-when">🌇 Lanche da tarde · 16h–18h</span>
+          <span class="rfc-badge badge-time">⏱ 8 min</span>
+        </div>
+      </div>
+    </div>
+    <div class="rfc-body">
+      <div class="rfc-section-title">Ingredientes</div>
+      <div class="ingredient-grid">
+        <div class="ing-row"><span class="ing-qty">1</span> ovo</div>
+        <div class="ing-row"><span class="ing-qty">20g</span> aveia</div>
+        <div class="ing-row"><span class="ing-qty">1</span> maçã madura</div>
+        <div class="ing-row"><span class="ing-qty">2 c.sopa</span> bebida vegetal</div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> canela</div>
+        <div class="ing-row"><span class="ing-qty">1 c.café</span> geleia de agave ou mel</div>
+        <div class="ing-row"><span class="ing-qty">1 c.café</span> fermento em pó (opcional)</div>
+      </div>
+      <div class="rfc-section-title">Preparação na Bimby</div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div>Colocar ¾ da maçã (sem casca, em pedaços) no copo. Cozinhar 5 min / 100°C / Vel. 1. Triturar 10 seg / Vel. 4.</div></div>
+        <div class="step-item"><div class="step-num">2</div><div>Adicionar aveia, ovo, bebida vegetal, canela, mel e fermento. Misturar 15 seg / Vel. 4.</div></div>
+        <div class="step-item"><div class="step-num">3</div><div>Verter numa chávena grande e levar ao microondas 2 min 30 seg.</div></div>
+        <div class="step-item"><div class="step-num">4</div><div>Cortar o ¼ de maçã restante em cubinhos e colocar por cima com canela.</div></div>
+      </div>
+      <div class="rfc-note">💡 Feito na hora — ideal para quando tens mais tempo. Acompanhar com 10g de oleaginosas.</div>
+    </div>
+  </div>
+
+  <!-- BOLITAS -->
+  <div class="recipe-full-card">
+    <div class="rfc-top">
+      <div class="rfc-icon" style="background:#F5EEF8;">🍫</div>
+      <div>
+        <div class="rfc-name">Bolitas de Aveia, Cacau e Canela</div>
+        <div class="rfc-meta">
+          <span class="rfc-badge badge-when">🌤️ Lanche da manhã · 9h–10h</span>
+          <span class="rfc-badge badge-when">🌇 Lanche da tarde · 16h–18h</span>
+          <span class="rfc-badge badge-time">⏱ 10 min + 30 min frio</span>
+          <span class="rfc-badge badge-yield">🍽 10 bolitas — comer 2</span>
+          <span class="rfc-badge" style="background:#FEF0F0;color:#C0392B;">🗓 Preparar ao fim de semana</span>
+        </div>
+      </div>
+    </div>
+    <div class="rfc-body">
+      <div class="rfc-section-title">Ingredientes</div>
+      <div class="ingredient-grid">
+        <div class="ing-row"><span class="ing-qty">80g</span> flocos de aveia</div>
+        <div class="ing-row"><span class="ing-qty">30g</span> manteiga de amendoim natural</div>
+        <div class="ing-row"><span class="ing-qty">1 c.sopa</span> cacau em pó s/ açúcar</div>
+        <div class="ing-row"><span class="ing-qty">1 c.chá</span> canela</div>
+        <div class="ing-row"><span class="ing-qty">1 c.sopa</span> mel ou xarope de agave</div>
+        <div class="ing-row"><span class="ing-qty">1 c.sopa</span> bebida vegetal (se necessário)</div>
+      </div>
+      <div class="rfc-section-title">Preparação na Bimby</div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div>Colocar todos os ingredientes no copo. Misturar 20 seg / Vel. 4. A massa deve ficar moldável — se estiver seca, adicionar 1 c. sopa de bebida vegetal e repetir.</div></div>
+        <div class="step-item"><div class="step-num">2</div><div>Com as mãos, formar bolinhas do tamanho de uma noz (aprox. 10 unidades).</div></div>
+        <div class="step-item"><div class="step-num">3</div><div>Dispor num tabuleiro forrado com papel vegetal e levar ao frigorífico 30 minutos até firmar.</div></div>
+      </div>
+      <div class="rfc-note">✅ Guardar numa caixa fechada no frigorífico até 5 dias. Sempre acompanhar com uma fonte de proteína — iogurte, ovo ou fatia de queijo magro.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DICAS -->
+<div class="page" id="dicas">
+  <br>
+
+  <div class="goal-banner">
+    <div class="big">54–55 kg</div>
+    <p>Objetivo de peso corporal.<br>Paciência, consistência e confiança no processo! 💪</p>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0s">
+    <div class="tip-icon">💧</div>
+    <div>
+      <div class="tip-title">Hidratação diária</div>
+      <div class="tip-text">Beber 1,5 a 1,8L de água por dia. Começar o dia com 1 copo (250ml) de água simples ou com gotas de limão.</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.05s">
+    <div class="tip-icon">⏱️</div>
+    <div>
+      <div class="tip-title">Intervalos entre refeições</div>
+      <div class="tip-text">Nunca comer com menos de 2h de intervalo. Não estar mais de 3h30 sem comer (exceto jejum noturno).</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.10s">
+    <div class="tip-icon">😴</div>
+    <div>
+      <div class="tip-title">Sono 7–8h por noite</div>
+      <div class="tip-text">O sono é base do emagrecimento: durante o descanso há reparação celular e controlo de apetite no dia seguinte.</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.15s">
+    <div class="tip-icon">🏃</div>
+    <div>
+      <div class="tip-title">Exercício físico</div>
+      <div class="tip-text">Mínimo 30 min de atividade física, pelo menos 3×/semana (ex: caminhada, ginásio). Colocar na agenda como prioridade.</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.20s">
+    <div class="tip-icon">🍔</div>
+    <div>
+      <div class="tip-title">Cheat Meal</div>
+      <div class="tip-text">Permitida 1 refeição hipercalórica por semana. Refrigerantes zero: máximo 2×/semana. Evitar álcool.</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.25s">
+    <div class="tip-icon">🥩</div>
+    <div>
+      <div class="tip-title">Escolha das proteínas</div>
+      <div class="tip-text">Preferir carnes brancas, peixe e ovos. Carne vermelha máximo 2×/semana. Evitar carne de porco.</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.30s">
+    <div class="tip-icon">🔥</div>
+    <div>
+      <div class="tip-title">Modo de confeção</div>
+      <div class="tip-text">Cozidos, grelhados, estufados ou assados com pouca gordura. Temperar com ervas e especiarias para variar sabores.</div>
+    </div>
+  </div>
+
+  <div class="tip-card" style="animation-delay:0.35s">
+    <div class="tip-icon">⚖️</div>
+    <div>
+      <div class="tip-title">Pesar os alimentos</div>
+      <div class="tip-text">Na fase inicial, pesa os alimentos com as gramas indicadas. Após 1 semana, já terás noção visual e não será necessário.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>
